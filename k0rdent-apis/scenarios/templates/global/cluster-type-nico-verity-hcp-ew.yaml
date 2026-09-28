@@ -75,6 +75,10 @@ nodePools:
     nodeCountMax: 6
     nodeCountDefault: 2
     networkAttachment:
+      # Rendered into the pool's UFO NetworkBundle as spec.host_config: each host's HostConfig
+      # is seeded from the default-vm HostConfigTemplate, which must exist in the UFO cluster.
+      host_agent:
+        template: default-vm
       ethernets:
         # Management. No `match`: the NIC behind enp1s0 has no LLDP peer and so
         # no Link CR, which is what byslot and fabricLocation resolve against --
