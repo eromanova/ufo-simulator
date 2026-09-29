@@ -51,6 +51,12 @@ reconciler:
     repository: "registry.ci.mirantis.com/k0rdent-apis/images/k0r-reconciler"
     pullPolicy: Always
 
+# Kind overlay sets IfNotPresent for a locally loaded image; we pull from MSR.
+credentials:
+  image:
+    repository: "registry.ci.mirantis.com/k0rdent-apis/images/k0r-credentials"
+    pullPolicy: Always
+
 workflow:
   api:
     image:
