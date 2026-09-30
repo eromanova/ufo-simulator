@@ -1,0 +1,12 @@
+# Netris + NICo lab without the Verity appliances (VNC/SDLC/Satori).
+# Use on top of env.yaml:
+#   openstack stack create -t heat.hot -e env.yaml -e env-netris-minimal.yaml <name>
+# The CMP flavor is sized for the minimal-lab topology (3 servers, NS fabric only).
+resource_registry:
+  "MCP2::SrvInstancesVNC": OS::Heat::None
+  "MCP2::SrvInstancesSDLC": OS::Heat::None
+  "MCP2::SrvInstancesSATORI": OS::Heat::None
+
+parameters:
+  cmp_flavor: 're.jenkins.slave.big'
+  gtw_flavor: 'ufo.l.gtw'

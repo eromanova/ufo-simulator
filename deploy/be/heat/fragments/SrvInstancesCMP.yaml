@@ -39,7 +39,7 @@ resources:
         str_replace:
           template: { get_file: ../scripts/instance_boot.sh }
           params:
-            $node_type: "gtw"
+            $node_type: "cmp"
             $wait_condition_notify: { get_attr: [ wait_handle, curl_cli ] }
 
   software_config_multi:
