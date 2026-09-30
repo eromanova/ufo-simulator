@@ -21,6 +21,9 @@ parameters:
     type: string
   netris_license:
     type: string
+  ufo_simulator_repo:
+    type: string
+    default: 'https://github.com/k0rdent/ufo-simulator'
   ufo_simulator_refspec:
     type: string
     default: 'main'
@@ -42,6 +45,7 @@ resources:
           params:
             $wait_condition_notify: { get_attr: [ wait_handle, curl_cli ] }
             $netris_license: { get_param: netris_license }
+            $ufo_simulator_repo: { get_param: ufo_simulator_repo }
             $ufo_simulator_refspec: { get_param: ufo_simulator_refspec }
             $artifacts_vars_file: { get_param: artifacts_vars_file }
   software_config_multi:

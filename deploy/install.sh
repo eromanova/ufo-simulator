@@ -12,6 +12,7 @@ export DEBIAN_FRONTEND=noninteractive
 export PIP_BREAK_SYSTEM_PACKAGES=1
 export KUBECONFIG=/root/.kube/config
 export NETRIS_LICENSE=${NETRIS_LICENSE:-''}
+export UFO_SIMULATOR_REPO=${UFO_SIMULATOR_REPO:-'https://github.com/k0rdent/ufo-simulator'}
 export UFO_SIMULATOR_REFSPEC=${UFO_SIMULATOR_REFSPEC:-'main'}
 export ARTIFACTS_VARS_FILE=${ARTIFACTS_VARS_FILE:-'artifacts-main'}
 # Accept basename (artifacts-main) or full filename (artifacts-main.yaml).
@@ -37,7 +38,7 @@ pip3 install ansible
 mkdir -p ${WORKDIR}
 
 if [[ ! -d $UFO_SIMULATOR_ANSIBLE_DIR ]]; then
-    git clone https://github.com/k0rdent/ufo-simulator $UFO_SIMULATOR_DIR
+    git clone ${UFO_SIMULATOR_REPO} $UFO_SIMULATOR_DIR
     pushd $UFO_SIMULATOR_DIR
     git fetch origin ${UFO_SIMULATOR_REFSPEC}:FETCH_HEAD
     git checkout FETCH_HEAD

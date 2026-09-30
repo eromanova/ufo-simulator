@@ -33,7 +33,7 @@ vm_disk_path: "/var/lib/libvirt/images"
 
 # VM Resources
 switch_vcpus: 4
-switch_memory_mb: 6192
+switch_memory_mb: 4096
 server_vcpus: 2
 server_memory_mb: 4096
 
@@ -80,20 +80,6 @@ topology:
       host_id: 1
     - name: vm-2
       host_id: 2
-    - name: vm-3
-      host_id: 3
-    - name: vm-4
-      host_id: 4
-    - name: vm-5
-      host_id: 5
-    - name: vm-6
-      host_id: 6
-    - name: vm-7
-      host_id: 7
-    - name: vm-8
-      host_id: 8
-    - name: vm-9
-      host_id: 9
     # 9 is maximum need to fix templates to support more
   softgates:
     - name: sg-0
@@ -108,26 +94,10 @@ topology:
     - { local: "leaf-0", local_port: "{{ switch_port_name_prefix }}1", remote: "vm-0", remote_port: "eth1", role: "ns" }
     - { local: "leaf-0", local_port: "{{ switch_port_name_prefix }}2", remote: "vm-1", remote_port: "eth1", role: "ns" }
     - { local: "leaf-0", local_port: "{{ switch_port_name_prefix }}3", remote: "vm-2", remote_port: "eth1", role: "ns" }
-    - { local: "leaf-0", local_port: "{{ switch_port_name_prefix }}4", remote: "vm-3", remote_port: "eth1", role: "ns" }
-    - { local: "leaf-0", local_port: "{{ switch_port_name_prefix }}5", remote: "vm-4", remote_port: "eth1", role: "ns" }
-    - { local: "leaf-0", local_port: "{{ switch_port_name_prefix }}6", remote: "vm-5", remote_port: "eth1", role: "ns" }
-    - { local: "leaf-0", local_port: "{{ switch_port_name_prefix }}7", remote: "vm-6", remote_port: "eth1", role: "ns" }
-    - { local: "leaf-0", local_port: "{{ switch_port_name_prefix }}8", remote: "vm-7", remote_port: "eth1", role: "ns" }
-    - { local: "leaf-0", local_port: "{{ switch_port_name_prefix }}9", remote: "vm-8", remote_port: "eth1", role: "ns" }
-    - { local: "leaf-0", local_port: "{{ switch_port_name_prefix }}10", remote: "vm-9", remote_port: "eth1", role: "ns" }
-    - { local: "leaf-0", local_port: "{{ switch_port_name_prefix }}11", remote: "vm-10", remote_port: "eth1", role: "ns" }
 
     - { local: "leaf-1", local_port: "{{ switch_port_name_prefix }}1", remote: "vm-0", remote_port: "eth2", role: "ns" }
     - { local: "leaf-1", local_port: "{{ switch_port_name_prefix }}2", remote: "vm-1", remote_port: "eth2", role: "ns" }
     - { local: "leaf-1", local_port: "{{ switch_port_name_prefix }}3", remote: "vm-2", remote_port: "eth2", role: "ns" }
-    - { local: "leaf-1", local_port: "{{ switch_port_name_prefix }}4", remote: "vm-3", remote_port: "eth2", role: "ns" }
-    - { local: "leaf-1", local_port: "{{ switch_port_name_prefix }}5", remote: "vm-4", remote_port: "eth2", role: "ns" }
-    - { local: "leaf-1", local_port: "{{ switch_port_name_prefix }}6", remote: "vm-5", remote_port: "eth2", role: "ns" }
-    - { local: "leaf-1", local_port: "{{ switch_port_name_prefix }}7", remote: "vm-6", remote_port: "eth2", role: "ns" }
-    - { local: "leaf-1", local_port: "{{ switch_port_name_prefix }}8", remote: "vm-7", remote_port: "eth2", role: "ns" }
-    - { local: "leaf-1", local_port: "{{ switch_port_name_prefix }}9", remote: "vm-8", remote_port: "eth2", role: "ns" }
-    - { local: "leaf-1", local_port: "{{ switch_port_name_prefix }}10", remote: "vm-9", remote_port: "eth2", role: "ns" }
-    - { local: "leaf-1", local_port: "{{ switch_port_name_prefix }}11", remote: "vm-10", remote_port: "eth2", role: "ns" }
 
     - { local: "leaf-0", local_port: "{{ switch_port_name_prefix }}23", remote: "sg-0", remote_port: "eth1", role: ext }
     - { local: "leaf-1", local_port: "{{ switch_port_name_prefix }}23", remote: "sg-0", remote_port: "eth2", role: ext }
@@ -154,53 +124,9 @@ topology:
 # Netris Switch CR create-time breakout for all EW switches (2 ports per physical port).
 ew_switch_breakout: "2x100"
 topology_ew:
-  spines:
-    - name: ew-spine-0
-      mgmt_ip: 10.200.0.130
-    - name: ew-spine-1
-      mgmt_ip: 10.200.0.131
-  leafs:
-    # EW leaves: spectrum-x with rail_id (rail topology allowed only on this type).
-    - name: ew-leaf-0
-      mgmt_ip: 10.200.0.120
-      type: spectrum-x
-      su_id: 0
-      rail_id: 0
-    - name: ew-leaf-1
-      mgmt_ip: 10.200.0.121
-      type: spectrum-x
-      su_id: 0
-      rail_id: 1
-    - name: ew-leaf-2
-      mgmt_ip: 10.200.0.122
-      type: spectrum-x
-      su_id: 0
-      rail_id: 2
-    - name: ew-leaf-3
-      mgmt_ip: 10.200.0.123
-      type: spectrum-x
-      su_id: 0
-      rail_id: 3
-    - name: ew-leaf-4
-      mgmt_ip: 10.200.0.124
-      type: spectrum-x
-      su_id: 0
-      rail_id: 4
-    - name: ew-leaf-5
-      mgmt_ip: 10.200.0.125
-      type: spectrum-x
-      su_id: 0
-      rail_id: 5
-    - name: ew-leaf-6
-      mgmt_ip: 10.200.0.126
-      type: spectrum-x
-      su_id: 0
-      rail_id: 6
-    - name: ew-leaf-7
-      mgmt_ip: 10.200.0.127
-      type: spectrum-x
-      su_id: 0
-      rail_id: 7
+  # Minimal lab: no east-west fabric (saves 10 switch VMs).
+  spines: []
+  leafs: []
 
 # Spines the Spectrum-X fabric *declares*, which is 4 per scalable unit. Port
 # numbering is absolute, so this must match the controller's fabric settings
@@ -253,7 +179,7 @@ redfish_password: password
 vm_base_mac: "52:54:00:12"
 bridge_name: br-mgmt
 vm_vcpus: 6
-vm_ram: 6144
+vm_ram: 4096
 vm_disk_size: 60
 disk_path: /var/lib/libvirt/images
 

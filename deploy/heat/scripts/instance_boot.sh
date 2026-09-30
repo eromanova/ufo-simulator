@@ -6,6 +6,8 @@ set -ex
 declare -r -g _INSTALL_SCRIPT=1
 
 export NETRIS_LICENSE=$netris_license
+export UFO_SIMULATOR_REPO=$ufo_simulator_repo
+export UFO_SIMULATOR_REPO=${UFO_SIMULATOR_REPO:-"https://github.com/k0rdent/ufo-simulator"}
 export UFO_SIMULATOR_REFSPEC=$ufo_simulator_refspec
 export UFO_SIMULATOR_REFSPEC=${UFO_SIMULATOR_REFSPEC:-"main"}
 export ARTIFACTS_VARS_FILE=$artifacts_vars_file
@@ -47,7 +49,7 @@ function handle_exit {
 }
 trap handle_exit EXIT
 
-git clone https://github.com/k0rdent/ufo-simulator /tmp/ufo-simulator
+git clone ${UFO_SIMULATOR_REPO} /tmp/ufo-simulator
 pushd /tmp/ufo-simulator
 git fetch origin ${UFO_SIMULATOR_REFSPEC}:FETCH_HEAD
 git checkout FETCH_HEAD

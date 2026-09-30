@@ -34,6 +34,10 @@ parameters:
   netris_license:
     type: string
     default: ''
+  ufo_simulator_repo:
+    type: string
+    description: Git URL of the ufo-simulator repo to clone at boot (e.g. a fork).
+    default: 'https://github.com/k0rdent/ufo-simulator'
   ufo_simulator_refspec:
     type: string
     default: 'main'
@@ -62,6 +66,7 @@ resources:
      - lcm_network
     type: MCP2::SrvInstances
     properties:
+      ufo_simulator_repo: { get_param: ufo_simulator_repo }
       ufo_simulator_refspec: { get_param: ufo_simulator_refspec }
       artifacts_vars_file: { get_param: artifacts_vars_file }
       netris_license: { get_param: netris_license }
