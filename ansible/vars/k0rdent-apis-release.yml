@@ -8,6 +8,11 @@
 # The playbook installs the k0rdent-apis chart from the checkout, so check out
 # the matching tag in k0rdent_apis_dir first (git checkout v1.3.0-dev.2).
 # ClusterTypes must then reference cluster-nico-0-10-0 / 0.10.0.
+#
+# k0r-authz is not published on registry.mirantis.com, so the authz policy
+# engine is turned off (the chart's own default; values-secret-kind.yaml turns
+# it on). Kong's k0rdent-authz plugin still validates JWTs.
+k0rdent_apis_authz_enabled: false
 k0rdent_apis_image_registry: registry.mirantis.com/k0rdent-ai/k0rdent-apis/images
 k0rdent_apis_image_tag: v1.3.0-dev.2
 k0rdent_apis_helm_repo_url: oci://registry.mirantis.com/k0rdent-ai/charts

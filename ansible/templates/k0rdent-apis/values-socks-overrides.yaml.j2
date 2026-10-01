@@ -19,8 +19,12 @@ auth:
     AUTH_INVITE_RESULT_URL: ""
 
 # Chart default is ghcr.io/k0rdent/k0r-authz; socks can't pull anonymous ghcr.
-# (Not published on registry.mirantis.com; authz is disabled by default.)
+# Not published on registry.mirantis.com: releases from there need it off
+# (k0rdent_apis_authz_enabled: false); otherwise values-secret-kind.yaml decides.
 authz:
+{% if k0rdent_apis_authz_enabled is defined %}
+  enabled: {{ k0rdent_apis_authz_enabled | bool | lower }}
+{% endif %}
   image:
     repository: "{{ k0rdent_apis_image_registry }}/k0r-authz"
 {% if k0rdent_apis_image_tag %}
