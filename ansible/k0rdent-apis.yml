@@ -40,10 +40,12 @@
     k0rdent_apis_image_registry: registry.ci.mirantis.com/k0rdent-apis/images
     k0rdent_apis_image_tag: ""
     k0rdent_apis_tools_image: "{{ k0rdent_apis_image_registry }}/k0r-tools:{{ k0rdent_apis_image_tag or 'main' }}"
-    # Extra browser origins allowed on a portal OAuth client, e.g. an Atlas UI on
-    # a NodePort, http://10.200.0.254:30310: each adds "<origin>/*" to redirectUris and "<origin>"
-    # to webOrigins. provision PATCHes the live client, so dropping an origin
-    # here removes it on the next run.
+    # Extra browser origins allowed on a portal OAuth client: each adds
+    # "<origin>/*" to redirectUris and "<origin>" to webOrigins. provision
+    # PATCHes the live client, so dropping an origin here removes it on the next
+    # run. Not needed for Atlas on http://localhost:3010 (already allowed);
+    # Atlas's session cookie is Secure, so plain-http origins other than
+    # localhost cannot sign in anyway.
     k0rdent_apis_portal_client: operator-portal
     k0rdent_apis_portal_extra_origins: []
 
