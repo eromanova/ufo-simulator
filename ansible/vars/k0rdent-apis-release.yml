@@ -1,0 +1,15 @@
+# Deploy a published k0rdent-apis release from registry.mirantis.com instead of
+# the CI registry's :main builds. Both the images and the cluster-nico chart
+# are public there, so no pull credentials are needed.
+#
+#   sudo -E ansible-playbook -i inventory.yml k0rdent-apis.yml --limit cmp01 \
+#     -e @vars/k0rdent-apis-release.yml
+#
+# The playbook installs the k0rdent-apis chart from the checkout, so check out
+# the matching tag in k0rdent_apis_dir first (git checkout v1.3.0-dev.2).
+# ClusterTypes must then reference cluster-nico-0-10-0 / 0.10.0.
+k0rdent_apis_image_registry: registry.mirantis.com/k0rdent-ai/k0rdent-apis/images
+k0rdent_apis_image_tag: v1.3.0-dev.2
+k0rdent_apis_helm_repo_url: oci://registry.mirantis.com/k0rdent-ai/charts
+k0rdent_apis_helm_repo_secret: ""
+k0rdent_apis_cluster_chart_version: 0.10.0

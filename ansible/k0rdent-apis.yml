@@ -31,8 +31,15 @@
     k0rdent_apis_nico_sync_path: "{{ k0rdent_apis_dir }}/nico-sync.sh"
     k0rdent_apis_platform_admin_dir: "{{ k8s_artifacts_dir }}/nico/child/platform_admin"
     k0rdent_apis_helm_repo_url: oci://registry.ci.mirantis.com/k0rdent-apis/charts
+    # Secret for the cluster-chart HelmRepository; empty for a public repo.
+    k0rdent_apis_helm_repo_secret: "{{ k0rdent_apis_pull_secret_name }}"
     k0rdent_apis_cluster_chart: cluster-nico
     k0rdent_apis_cluster_chart_version: 0.0.0-main
+    # Where the k0r-* images come from. An empty tag keeps each chart's default
+    # (main); set both to deploy a release, see vars/k0rdent-apis-release.yml.
+    k0rdent_apis_image_registry: registry.ci.mirantis.com/k0rdent-apis/images
+    k0rdent_apis_image_tag: ""
+    k0rdent_apis_tools_image: "{{ k0rdent_apis_image_registry }}/k0r-tools:{{ k0rdent_apis_image_tag or 'main' }}"
 
   tasks:
     - name: Ensure workspace exists
@@ -330,7 +337,12 @@
         kubeconfig: "{{ kubeconfig_path }}"
         state: present
         namespace: "{{ k0rdent_apis_namespace }}"
-        src: "{{ k0rdent_apis_dir }}/deploy/k8s/k0r-tools/provision-apply.yaml"
+        # The lab patch pins the CI registry's k0r-tools:main; follow the
+        # configured registry/tag instead.
+        definition: >-
+          {{ lookup('ansible.builtin.file', k0rdent_apis_dir ~ '/deploy/k8s/k0r-tools/provision-apply.yaml')
+             | regex_replace('(?m)^(\s+image:\s*)\S*k0r-tools\S*$', '\g<1>' ~ k0rdent_apis_tools_image)
+             | from_yaml }}
 
     - name: Wait for provision-apply job to complete
       kubernetes.core.k8s_info:
@@ -390,13 +402,9 @@
             namespace: kcm-system
             labels:
               k0rdent.mirantis.com/managed: "true"
-          spec:
-            type: oci
-            interval: 30s
-            provider: generic
-            url: "{{ k0rdent_apis_helm_repo_url }}"
-            secretRef:
-              name: "{{ k0rdent_apis_pull_secret_name }}"
+          spec: >-
+            {{ {'type': 'oci', 'interval': '30s', 'provider': 'generic', 'url': k0rdent_apis_helm_repo_url}
+               | combine({'secretRef': {'name': k0rdent_apis_helm_repo_secret}} if k0rdent_apis_helm_repo_secret else {}) }}
 
     - name: Ensure ClusterTemplate for NICO cluster in kcm-system
       kubernetes.core.k8s:

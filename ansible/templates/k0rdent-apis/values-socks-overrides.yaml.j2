@@ -8,7 +8,10 @@ global:
 auth:
   image:
     pullPolicy: Always
-    repository: "registry.ci.mirantis.com/k0rdent-apis/images/k0r-auth"
+    repository: "{{ k0rdent_apis_image_registry }}/k0r-auth"
+{% if k0rdent_apis_image_tag %}
+    tag: "{{ k0rdent_apis_image_tag }}"
+{% endif %}
   env:
     # OAuth callback after IdP login — must be a URL the browser can reach
     AUTH_CALLBACK_URL: "{{ k0rdent_apis_base_url }}/v1/regions/global/auth/callback"
@@ -16,46 +19,71 @@ auth:
     AUTH_INVITE_RESULT_URL: ""
 
 # Chart default is ghcr.io/k0rdent/k0r-authz; socks can't pull anonymous ghcr.
+# (Not published on registry.mirantis.com; authz is disabled by default.)
 authz:
   image:
-    repository: "registry.ci.mirantis.com/k0rdent-apis/images/k0r-authz"
+    repository: "{{ k0rdent_apis_image_registry }}/k0r-authz"
+{% if k0rdent_apis_image_tag %}
+    tag: "{{ k0rdent_apis_image_tag }}"
+{% endif %}
     pullPolicy: Always
 
 iam:
   image:
-    repository: "registry.ci.mirantis.com/k0rdent-apis/images/k0r-iam"
+    repository: "{{ k0rdent_apis_image_registry }}/k0r-iam"
+{% if k0rdent_apis_image_tag %}
+    tag: "{{ k0rdent_apis_image_tag }}"
+{% endif %}
     pullPolicy: Always
 
 organizations:
   image:
-    repository: "registry.ci.mirantis.com/k0rdent-apis/images/k0r-organizations"
+    repository: "{{ k0rdent_apis_image_registry }}/k0r-organizations"
+{% if k0rdent_apis_image_tag %}
+    tag: "{{ k0rdent_apis_image_tag }}"
+{% endif %}
     pullPolicy: Always
 
 compute:
   image:
-    repository: "registry.ci.mirantis.com/k0rdent-apis/images/k0r-compute"
+    repository: "{{ k0rdent_apis_image_registry }}/k0r-compute"
+{% if k0rdent_apis_image_tag %}
+    tag: "{{ k0rdent_apis_image_tag }}"
+{% endif %}
     pullPolicy: Always
 
 infrastructure:
   image:
-    repository: "registry.ci.mirantis.com/k0rdent-apis/images/k0r-infrastructure"
+    repository: "{{ k0rdent_apis_image_registry }}/k0r-infrastructure"
+{% if k0rdent_apis_image_tag %}
+    tag: "{{ k0rdent_apis_image_tag }}"
+{% endif %}
     pullPolicy: Always
 
 notifications:
   image:
-    repository: "registry.ci.mirantis.com/k0rdent-apis/images/k0r-notifications"
+    repository: "{{ k0rdent_apis_image_registry }}/k0r-notifications"
+{% if k0rdent_apis_image_tag %}
+    tag: "{{ k0rdent_apis_image_tag }}"
+{% endif %}
     pullPolicy: Always
 
 reconciler:
   image:
-    repository: "registry.ci.mirantis.com/k0rdent-apis/images/k0r-reconciler"
+    repository: "{{ k0rdent_apis_image_registry }}/k0r-reconciler"
+{% if k0rdent_apis_image_tag %}
+    tag: "{{ k0rdent_apis_image_tag }}"
+{% endif %}
     pullPolicy: Always
 
 workflow:
   api:
     image:
       pullPolicy: Always
-      repository: "registry.ci.mirantis.com/k0rdent-apis/images/k0r-workflow"
+      repository: "{{ k0rdent_apis_image_registry }}/k0r-workflow"
+{% if k0rdent_apis_image_tag %}
+      tag: "{{ k0rdent_apis_image_tag }}"
+{% endif %}
     envSecretRef:
       WORKFLOW_DB_USER:     { secret: db, key: WORKFLOW_DB_USER }
       WORKFLOW_DB_PASSWORD: { secret: db, key: WORKFLOW_DB_PASSWORD }
@@ -71,7 +99,10 @@ workflow:
   worker:
     image:
       pullPolicy: Always
-      repository: "registry.ci.mirantis.com/k0rdent-apis/images/k0r-workflow-worker"
+      repository: "{{ k0rdent_apis_image_registry }}/k0r-workflow-worker"
+{% if k0rdent_apis_image_tag %}
+      tag: "{{ k0rdent_apis_image_tag }}"
+{% endif %}
     # Kind overlay puts the worker in SECRETS-ONLY file mode
     # (values-secret-kind.yaml). We need envSecretRef here for
     # NICO_SERVICE_ACCOUNT_PASSWORD (an out-of-band Secret, not one of the
@@ -107,13 +138,19 @@ workflow:
 
 keycloak:
   image:
-    repository: "registry.ci.mirantis.com/k0rdent-apis/images/k0r-keycloak"
+    repository: "{{ k0rdent_apis_image_registry }}/k0r-keycloak"
+{% if k0rdent_apis_image_tag %}
+    tag: "{{ k0rdent_apis_image_tag }}"
+{% endif %}
     pullPolicy: Always
 
 kong:
   image:
     pullPolicy: Always
-    repository: "registry.ci.mirantis.com/k0rdent-apis/images/k0r-kong"
+    repository: "{{ k0rdent_apis_image_registry }}/k0r-kong"
+{% if k0rdent_apis_image_tag %}
+    tag: "{{ k0rdent_apis_image_tag }}"
+{% endif %}
   cors:
     enabled: true
     # Browser's Origin header will be http://<UFO_IP>:30080 — Kong rejects
