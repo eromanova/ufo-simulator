@@ -40,6 +40,12 @@
     k0rdent_apis_image_registry: registry.ci.mirantis.com/k0rdent-apis/images
     k0rdent_apis_image_tag: ""
     k0rdent_apis_tools_image: "{{ k0rdent_apis_image_registry }}/k0r-tools:{{ k0rdent_apis_image_tag or 'main' }}"
+    # Extra browser origins allowed on a portal OAuth client, e.g. an Atlas UI at
+    # http://<lb-ip>:3010: each adds "<origin>/*" to redirectUris and "<origin>"
+    # to webOrigins. provision PATCHes the live client, so dropping an origin
+    # here removes it on the next run.
+    k0rdent_apis_portal_client: operator-portal
+    k0rdent_apis_portal_extra_origins: []
 
   tasks:
     - name: Ensure workspace exists
@@ -305,6 +311,28 @@
         src: "{{ k0rdent_apis_dir }}/scripts/post-deploy/envs/{{ k0rdent_apis_provision_env }}/manifest.yaml"
       register: k0rdent_apis_provision_manifest
 
+    - name: Parse provision manifest to add extra portal origins
+      ansible.builtin.set_fact:
+        k0rdent_apis_manifest_obj: "{{ k0rdent_apis_provision_manifest.content | b64decode | from_yaml }}"
+        k0rdent_apis_portal_clients: []
+      when: k0rdent_apis_portal_extra_origins | length > 0
+
+    - name: Add extra origins to the {{ k0rdent_apis_portal_client }} portal client
+      ansible.builtin.set_fact:
+        k0rdent_apis_portal_clients: >-
+          {{ k0rdent_apis_portal_clients + [
+               item | combine({
+                 'redirectUris': (item.redirectUris | default([])
+                                  + (k0rdent_apis_portal_extra_origins | map('regex_replace', '$', '/*') | list)) | unique,
+                 'webOrigins': (item.webOrigins | default([]) + k0rdent_apis_portal_extra_origins) | unique,
+               })
+               if item.clientId == k0rdent_apis_portal_client else item
+             ] }}
+      loop: "{{ k0rdent_apis_manifest_obj.portalClients | default([]) }}"
+      loop_control:
+        label: "{{ item.clientId }}"
+      when: k0rdent_apis_portal_extra_origins | length > 0
+
     - name: Ensure provision-manifest ConfigMap exists
       kubernetes.core.k8s:
         kubeconfig: "{{ kubeconfig_path }}"
@@ -316,7 +344,26 @@
             name: provision-manifest
             namespace: "{{ k0rdent_apis_namespace }}"
           data:
-            manifest.yaml: "{{ k0rdent_apis_provision_manifest.content | b64decode }}"
+            manifest.yaml: >-
+              {{ (k0rdent_apis_manifest_obj | combine({'portalClients': k0rdent_apis_portal_clients}) | to_nice_yaml)
+                 if k0rdent_apis_portal_extra_origins | length > 0
+                 else k0rdent_apis_provision_manifest.content | b64decode }}
+      register: k0rdent_apis_provision_manifest_cm
+
+    # A completed Job is not re-run by re-applying it, so a changed manifest
+    # would never reach provision.
+    - name: Remove the previous provision-apply job when the manifest changed
+      kubernetes.core.k8s:
+        kubeconfig: "{{ kubeconfig_path }}"
+        state: absent
+        api_version: batch/v1
+        kind: Job
+        namespace: "{{ k0rdent_apis_namespace }}"
+        name: provision-apply
+        delete_options:
+          propagationPolicy: Background
+        wait: true
+      when: k0rdent_apis_provision_manifest_cm.changed
 
     - name: Ensure provision-manifest-secrets exists
       kubernetes.core.k8s:
